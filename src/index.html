@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Timer</title>
+    </head>
+
+    <body>
+
+        <link rel="stylesheet" href="index.css">
+
+        <input type="text" id="myInput" class="textbox">
+
+        <div>
+            <button id="oneHour">1 Hour</button>
+            <button id="thirtyMinutes">30 Minutes</button>
+            <button id="tenMinutes">10 Minutes</button>
+        </div>
+
+        <h1 id="timer">0:00:00</h1>
+
+        <div class="control">
+            <button id="start">Start</button>
+            <button id="pause">Pause</button>
+            <button id="reset">Reset</button>
+        </div>
+
+        <script>
+            const timer = document.getElementById("timer")
+            const input = document.getElementById("myInput")
+
+            const oneHour = document.getElementById("oneHour")
+            const thirtyMinutes = document.getElementById("thirtyMinutes")
+            const tenMinutes = document.getElementById("tenMinutes")
+
+            const start = document.getElementById("start")
+            const pause = document.getElementById("pause")
+            const reset = document.getElementById("reset")
+
+            let timeLeft = 0
+            let interval
+            function displayTime() {
+                const hours = Math.floor(timeLeft / 3600)
+                const minutes = Math.floor((timeLeft % 3600) / 60)
+                const seconds = timeLeft % 60
+
+                timer.textContent =
+                    hours + ":" +
+                    String(minutes).padStart(2, "0") + ":" + /* Multiplies 2 x 0 digits */
+                    String(seconds).padStart(2, "0")
+            }
+            oneHour.addEventListener("click", function() {
+                timeLeft = 3600
+                input.value = "1:00:00"
+                displayTime()
+            })
+            thirtyMinutes.addEventListener("click", function() {
+                timeLeft = 1800
+                input.value = "0:30:00"
+                displayTime()
+            })
+            tenMinutes.addEventListener("click", function() {
+                timeLeft = 600
+                input.value = "0:10:00"
+                displayTime()
+            })
+            input.addEventListener("input", function() {
+                timer.textContent = input.value
+            })
+            start.addEventListener("click", function() {
+                clearInterval(interval)
+                interval = setInterval(function() {
+                    if (timeLeft > 0) {
+                        timeLeft--
+                        displayTime()
+                    } else {
+                        clearInterval(interval)
+                    }
+                }, 1000)
+            })
+            pause.addEventListener("click", function() {
+                clearInterval(interval)
+            })
+            reset.addEventListener("click", function() {
+                clearInterval(interval)
+                timeLeft = 0
+                input.value = ""
+                displayTime()
+            })
+        </script>
+    </body>
+</html>
