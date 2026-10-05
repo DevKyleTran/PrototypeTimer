@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+```
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Timer</title>
+</head>
+
+<body>
+
+    <link rel="stylesheet" href="index.css">
+
+    <input
+        type="text"
+        id="myInput"
+        class="textbox"
+        placeholder="Enter time..."
+    >
+
+    <h1 id="timer">0:00:00</h1>
+
+    <div class="control">
+        <button id="start">Start</button>
+        <button id="pause">Pause</button>
+        <button id="reset">Reset</button>
+    </div>
+
+    <script>
+
+        const timer = document.getElementById("timer")
+        const input = document.getElementById("myInput")
+
+        const start = document.getElementById("start")
+        const pause = document.getElementById("pause")
+        const reset = document.getElementById("reset")
+
+        let timeLeft = 0
+        let interval
+
+        function displayTime() {
+
+            const hours = Math.floor(timeLeft / 3600)
+            const minutes = Math.floor((timeLeft % 3600) / 60)
+            const seconds = timeLeft % 60
+
+            timer.textContent =
+                hours + ":" +
+                String(minutes).padStart(2, "0") + ":" +
+                String(seconds).padStart(2, "0")
+        }
+
+        function parseTime(value) {
+
+            value = value.trim().toLowerCase()
+
+            // HH:MM:SS
+            if (/^\d+:\d{1,2}:\d{1,2}$/.test(value)) {
+
+                const parts = value.split(":").map(Number)
+
+                const hours = parts[0]
+                const minutes = parts[1]
+                const seconds = parts[2]
+
+                if (minutes >= 60 || seconds >= 60) {
+                    return null
+                }
+
+                return hours * 3600 + minutes * 60 + seconds
+            }
+
+            // MM:SS
+            if (/^\d+:\d{1,2}$/.test(value)) {
+
+                const parts = value.split(":").map(Number)
+
+                const minutes = parts[0]
+                const seconds = parts[1]
+
+                if (seconds >= 60) {
+                    return null
+                }
+
+                return minutes * 60 + seconds
+            }
+
+            // "1 hour 20 minutes"
+            let total = 0
+
+            const hours = value.match(/(\d+(?:\.\d+)?)\s*(?:hours?|hrs?|h)\b/)
+            const minutes = value.match(/(\d+(?:\.\d+)?)\s*(?:minutes?|mins?|m)\b/)
+            const seconds = value.match(/(\d+(?:\.\d+)?)\s*(?:seconds?|secs?|s)\b/)
+
+            if (hours) {
+                total += Number(hours[1]) * 3600
+            }
+
+            if (minutes) {
+                total += Number(minutes[1]) * 60
+            }
+
+            if (seconds) {
+                total += Number(seconds[1])
+            }
+
+            // Plain number = minutes
+            if (!hours && !minutes && !seconds && /^\d+(?:\.\d+)?$/.test(value)) {
+                total = Number(value) * 60
+            }
+
+            return total > 0 ? Math.floor(total) : null
+        }
+
+        input.addEventListener("input", function() {
+
+            clearInterval(interval)
+
+            const parsedTime = parseTime(input.value)
+
+            if (parsedTime !== null) {
+
+                timeLeft = parsedTime
+                displayTime()
+
+            } else {
+
+                timeLeft = 0
+                displayTime()
+
+            }
+
+        })
+
+        start.addEventListener("click", function() {
+
+            clearInterval(interval)
+
+            interval = setInterval(function() {
+
+                if (timeLeft > 0) {
+
+                    timeLeft--
+                    displayTime()
+
+                } else {
+
+                    clearInterval(interval)
+
+                }
+
+            }, 1000)
+
+        })
+
+        pause.addEventListener("click", function() {
+
+            clearInterval(interval)
+
+        })
+
+        reset.addEventListener("click", function() {
+
+            clearInterval(interval)
+
+            timeLeft = 0
+            input.value = ""
+
+            displayTime()
+
+        })
+
+    </script>
+
+</body>
+```
+
+</html>
